@@ -4,9 +4,10 @@ const nodePortScanner = require("node-port-scanner");
 
 import { bruteForceSSH } from "./attacks/ssh";
 import { SSH_PORT } from "./constants";
+import { IClientJson, IVulnObject } from "./IClientJson";
 
 const app = express();
-const port = 443;
+const port = 3000;
 
 app.get("/scan", async (req: Request, res: Response) => {
   try {
@@ -25,6 +26,29 @@ app.get("/scan", async (req: Request, res: Response) => {
 
     const possibleAttacks: number[] = [];
 
+    const vulnObjects: IVulnObject[] = [
+      {
+        port: SSH_PORT,
+        severity: 2,
+        vulnerabilities: ["LITTLE SHIT"],
+      },
+      {
+        port: 443,
+        severity: 10,
+        vulnerabilities: ["SHIT OF SHITS", "MORE SHIT"],
+      },
+    ];
+
+    const getNumOfVuln = (): number => {
+      let countVulns: number = 0;
+
+      vulnObjects.forEach((vulnObj: IVulnObject) => {
+        countVulns += vulnObj.vulnerabilities.length;
+      });
+
+      return countVulns;
+    };
+
     openPorts.forEach((port: number) => {
       switch (port) {
         case SSH_PORT:
@@ -33,7 +57,12 @@ app.get("/scan", async (req: Request, res: Response) => {
       }
     });
 
-    res.send(possibleAttacks);
+    const jsonResponse: IClientJson = {
+      vulnObjects,
+      numOfVulnerabilities: getNumOfVuln(),
+    };
+
+    res.send(jsonResponse);
   } catch {
     res.send("").status(500);
   }
