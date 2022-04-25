@@ -1,0 +1,1 @@
+export const SSH_PORT = 22;
