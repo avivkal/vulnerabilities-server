@@ -6,7 +6,7 @@ import { bruteForceSSH } from "./attacks/ssh";
 import { SSH_PORT } from "./constants";
 
 const app = express();
-const port = 3000;
+const port = 443;
 
 app.get("/scan", async (req: Request, res: Response) => {
   try {
